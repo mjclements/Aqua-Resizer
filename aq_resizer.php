@@ -5,6 +5,7 @@
  * Description   : Resizes WordPress images on the fly
  * Version       : 1.2.2
  * Author        : Syamil MJ
+ * Author        : Mj Clements
  * Author URI    : http://aquagraphite.com
  * License       : WTFPL - http://sam.zoy.org/wtfpl/
  * Documentation : https://github.com/sy4mil/Aqua-Resizer/
@@ -15,6 +16,8 @@
  * @param bool    $crop     - (optional) default to soft crop
  * @param bool    $single   - (optional) returns an array if false
  * @param bool    $upscale  - (optional) resizes smaller images
+ * @param array   $crop_array - (optional) specify the crop type in accordance with wp_image_editor
+                                  must have two arguments (x, y), otherwise, crops will default to center crops
  * @uses  wp_upload_dir()
  * @uses  image_resize_dimensions()
  * @uses  wp_get_image_editor()
@@ -140,7 +143,14 @@ if(!class_exists('Aq_Resize')) {
                     else {
 
                         $editor = wp_get_image_editor( $img_path );
-
+                        if( $crop = false ){
+                                                    if ( is_wp_error( $editor ) || is_wp_error( $editor->resize( $width, $height, $crop ) ) ) {
+                            throw new Aq_Exception('Unable to get WP_Image_Editor: ' . 
+                                                   $editor->get_error_message() . ' (is GD or ImageMagick installed?)');
+                            }
+                        } else if ($crop_array.count() < 2) {
+                            $crop_array = array( 'center', 'center');
+                        }
                         if ( is_wp_error( $editor ) || is_wp_error( $editor->resize( $width, $height, $crop ) ) ) {
                             throw new Aq_Exception('Unable to get WP_Image_Editor: ' . 
                                                    $editor->get_error_message() . ' (is GD or ImageMagick installed?)');
