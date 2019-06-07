@@ -128,6 +128,9 @@ if(!class_exists('Aq_Resize')) {
                 } else {
                     // Use this to check if cropped image already exists, so we can return that instead.
                     $suffix = "{$dst_w}x{$dst_h}";
+                    if(!($crop_array.count() < 2)){
+                      $suffix += crop_array[0] . crop_array[1];
+                    }
                     $dst_rel_path = str_replace( '.' . $ext, '', $rel_path );
                     $destfilename = "{$upload_dir}{$dst_rel_path}-{$suffix}.{$ext}";
 
